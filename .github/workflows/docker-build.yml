@@ -1,13 +1,22 @@
 name: Build training image
 
-# When we run:
-# - push to main: build and push image to GHCR (so you can pull it for runs or pipelines).
-# - pull_request to main: build only (verify Dockerfile and deps; no push).
+# Only when model/training-affecting files change (not README, .gitignore, docs, etc.).
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onpushpull_requestpull_request_targetpathspaths_ignore
 on:
   push:
     branches: [main]
+    paths:
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'requirements.txt'
+      - 'src/**'
   pull_request:
     branches: [main]
+    paths:
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'requirements.txt'
+      - 'src/**'
 
 env:
   REGISTRY: ghcr.io
