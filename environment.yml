@@ -1,0 +1,13 @@
+# Conda environment for reproducible runs.
+# Create: conda env create -f environment.yml
+# Activate: conda activate mlops
+# Update after changing: conda env update -f environment.yml --prune
+name: mlops
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+    - -r requirements.txt

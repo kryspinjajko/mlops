@@ -1,0 +1,18 @@
+# Don't copy env, artifacts, or repo metadata into the image.
+.venv
+venv
+env
+__pycache__
+*.pyc
+.mypy_cache
+.pytest_cache
+.coverage
+htmlcov
+mlruns
+models
+.git
+.gitignore
+.dockerignore
+.cursor
+*.md
+!README.md

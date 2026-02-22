@@ -1,0 +1,5 @@
+# Dependencies added as we need them (MLflow, TensorFlow, AWS SDK, etc.).
+# Pin major versions for reproducibility; update when we need a feature.
+pandas>=2.0,<3
+torch>=2.0,<3
+mlflow>=2.0,<3
