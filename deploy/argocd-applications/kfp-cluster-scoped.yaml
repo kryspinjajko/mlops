@@ -1,0 +1,25 @@
+# Kubeflow Pipelines cluster-scoped resources (CRDs, etc.). Syncs first (wave 0).
+# Argo CD syncs from upstream; no Terraform null_resource or kubectl.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kfp-cluster-scoped
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  labels:
+    app.kubernetes.io/name: kfp-cluster-scoped
+    app.kubernetes.io/part-of: mlops
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/kubeflow/pipelines
+    path: manifests/kustomize/cluster-scoped-resources
+    targetRevision: v2.15.0
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ""
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

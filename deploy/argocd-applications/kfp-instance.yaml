@@ -1,0 +1,27 @@
+# Kubeflow Pipelines instance (API, UI, controllers). Syncs after cluster-scoped (wave 1).
+# Platform-agnostic = no GCP; works on EKS.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kfp-instance
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+  labels:
+    app.kubernetes.io/name: kfp-instance
+    app.kubernetes.io/part-of: mlops
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/kubeflow/pipelines
+    path: manifests/kustomize/env/platform-agnostic
+    targetRevision: v2.15.0
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeflow
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
