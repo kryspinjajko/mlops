@@ -1,0 +1,6 @@
+# Copy to backend.hcl and set values from: cd bootstrap && terraform output
+# Do not commit backend.hcl.
+# Region MUST match the region where the bucket was created (e.g. us-east-1 if bootstrap used default).
+
+bucket = "mlops-tf-state-XXXXXXXX"
+region = "us-east-1"

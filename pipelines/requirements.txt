@@ -1,0 +1,3 @@
+# Kubeflow Pipelines SDK v2 (compile and submit pipelines).
+# Install: pip install -r pipelines/requirements.txt
+kfp>=2.5,<3

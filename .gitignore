@@ -43,3 +43,12 @@ mlruns/
 # OS
 .DS_Store
 Thumbs.db
+
+# Terraform
+**/.terraform/
+terraform/backend.hcl
+terraform/bootstrap/terraform.tfstate
+terraform/bootstrap/terraform.tfstate.backup
+
+# Secrets / local env
+.env
