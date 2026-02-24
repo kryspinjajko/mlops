@@ -5,6 +5,7 @@ kind: Kustomization
 # This means we never fork KFP — upgrading is just bumping the ?ref= tag.
 resources:
   - https://github.com/kubeflow/pipelines/manifests/kustomize/env/platform-agnostic?ref=2.15.0
+  - cache-server-tls.yaml
 
 patches:
   # EKS fix: EBS volumes mount as root:root. SeaweedFS runs as uid/gid 1000
