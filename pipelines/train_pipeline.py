@@ -16,7 +16,7 @@ from kfp import compiler
 # Default: training image from GHCR (set TRAIN_IMAGE or pass at runtime).
 DEFAULT_TRAIN_IMAGE = os.environ.get(
     "TRAIN_IMAGE",
-    "ghcr.io/your-org/mlops/train:latest",  # Replace with your image after first CI push
+    "ghcr.io/kryspinjajko/mlops:latest",
 )
 
 
