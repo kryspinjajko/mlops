@@ -1,5 +1,7 @@
 # Kubeflow Pipelines instance (API, UI, controllers). Syncs after cluster-scoped (wave 1).
-# Platform-agnostic = no GCP; works on EKS.
+# Points to our Kustomize overlay (manifests/kfp-overlay) which pulls upstream KFP as a
+# remote base and applies EKS-specific patches (e.g. seaweedfs fsGroup for EBS volumes).
+# Upgrading KFP = bump the ?ref= tag in manifests/kfp-overlay/kustomization.yaml only.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -13,9 +15,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/kubeflow/pipelines
-    path: manifests/kustomize/env/platform-agnostic
-    targetRevision: "2.15.0"
+    repoURL: https://github.com/kryspinjajko/mlops
+    path: manifests/kfp-overlay
+    targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
     namespace: kubeflow
