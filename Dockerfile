@@ -13,6 +13,7 @@ RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/wh
 # Non-root user for production (Docker best practice).
 RUN useradd --create-home --uid 1000 appuser
 COPY --chown=appuser:appuser src ./src
+COPY --chown=appuser:appuser data ./data
 USER appuser
 
 # Default: run training. Override with docker run ... --epochs 50
