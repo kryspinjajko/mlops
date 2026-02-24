@@ -1,17 +1,38 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-# Pull the upstream KFP platform-agnostic manifests directly from GitHub.
-# This means we never fork KFP — upgrading is just bumping the ?ref= tag.
+# Upstream KFP as a remote base. Upgrading = bump ?ref= only.
 resources:
   - https://github.com/kubeflow/pipelines/manifests/kustomize/env/platform-agnostic?ref=2.15.0
-  - cache-server-tls.yaml
 
 patches:
-  # EKS fix: EBS volumes mount as root:root. SeaweedFS runs as uid/gid 1000
-  # and can't write to /data. fsGroup tells Kubernetes to chown the volume
-  # to group 1000 before starting the container.
+  # EKS: EBS volumes mount as root:root. SeaweedFS runs as uid/gid 1000
+  # and cannot write to /data without fsGroup chowning the mount.
   - path: seaweedfs-fsgroup.yaml
     target:
       kind: Deployment
       name: seaweedfs
+
+  # cache-deployer and cache-server are broken on EKS 1.35+:
+  # the CSR signer they use (kubernetes.io/kubelet-serving) does not issue
+  # certificates to service accounts in modern Kubernetes — only to kubelets.
+  # These are optional (pipeline step caching only); core KFP works without them.
+  # TODO: re-enable when cert-manager is added to the stack.
+  - patch: |-
+      $patch: delete
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: cache-deployer-deployment
+    target:
+      kind: Deployment
+      name: cache-deployer-deployment
+  - patch: |-
+      $patch: delete
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: cache-server
+    target:
+      kind: Deployment
+      name: cache-server
