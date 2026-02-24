@@ -1,60 +1,40 @@
 """
-Kubeflow Pipelines v2: train → (optional evaluate) → register.
+Kubeflow Pipelines v2: train container component.
 
 Production pattern: one container component that runs our training image (same as CI).
 Compile: python pipelines/train_pipeline.py
 Upload/run via KFP UI or CLI: kfp run create --experiment mlops-train --pipeline-file pipeline.yaml
 
-Requires: pip install kfp
+Requires: pip install -r pipelines/requirements.txt
 """
-from __future__ import annotations
-
-import os
 from kfp import dsl
 from kfp import compiler
 
-# Default: training image from GHCR (set TRAIN_IMAGE or pass at runtime).
-DEFAULT_TRAIN_IMAGE = os.environ.get(
-    "TRAIN_IMAGE",
-    "ghcr.io/kryspinjajko/mlops:latest",
-)
+TRAIN_IMAGE = "ghcr.io/kryspinjajko/mlops:latest"
 
 
 @dsl.container_component
 def train(
     epochs: int = 50,
     lr: float = 0.01,
-    mlflow_tracking_uri: str = "",
-    train_image: str = DEFAULT_TRAIN_IMAGE,
 ):
-    """Runs the training container. Logs to MLflow and registers model 'mlops-predictor'."""
+    """Runs the training container. Image is built and pushed to GHCR by CI."""
     return dsl.ContainerSpec(
-        image=train_image,
+        image=TRAIN_IMAGE,
         command=["python", "-m", "src.train"],
-        args=[
-            "--epochs", str(epochs),
-            "--lr", str(lr),
-        ],
-        env=[dsl.EnvVar(name="MLFLOW_TRACKING_URI", value=mlflow_tracking_uri)],
+        args=["--epochs", str(epochs), "--lr", str(lr)],
     )
 
 
 @dsl.pipeline(
     name="mlops-train-pipeline",
-    description="Train model, log to MLflow, register mlops-predictor.",
+    description="Train model on EKS via KFP. Logs to MLflow when tracking URI is configured.",
 )
 def train_pipeline(
     epochs: int = 50,
     lr: float = 0.01,
-    mlflow_tracking_uri: str = "",
-    train_image: str = DEFAULT_TRAIN_IMAGE,
 ):
-    train(
-        epochs=epochs,
-        lr=lr,
-        mlflow_tracking_uri=mlflow_tracking_uri,
-        train_image=train_image,
-    )
+    train(epochs=epochs, lr=lr)
 
 
 def main() -> None:
